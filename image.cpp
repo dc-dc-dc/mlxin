@@ -90,9 +90,23 @@ mlx::core::array load_png(const std::string &path)
     return mlx::core::array(buffer, {height, width, 4});
 }
 
+bool jpeg_sig_cmp(unsigned char *buf)
+{
+    return (buf[0] == 0xFF && buf[1] == 0xD8 && buf[2] == 0xFF);
+}
+
 mlx::core::array load_jpeg(const std::string &path)
 {
     auto fp = load_file(path);
+    unsigned char header[4];
+    fread(header, 1, 3, fp);
+
+    if (!jpeg_sig_cmp(header))
+    {
+        fclose(fp);
+        throw std::runtime_error("File was not a valid jpg");
+    }
+    fseek(fp, 0, SEEK_SET);
     struct jpeg_decompress_struct cinfo;
     struct jpeg_error_mgr jerr;
     cinfo.err = jpeg_std_error(&jerr);
