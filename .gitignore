@@ -1,0 +1,11 @@
+CMakeFiles/
+.vscode/
+venv/
+
+cmake_install.cmake
+CMakeCache.txt
+Makefile
+
+dog.*
+mlx_in
+*.npy
