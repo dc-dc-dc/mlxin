@@ -57,37 +57,43 @@ mlx::core::array load_png(const std::string &path)
     }
     if (color_type == PNG_COLOR_TYPE_PALETTE)
     {
-        printf("palette\n");
         png_set_palette_to_rgb(png);
     }
     if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
     {
-        printf("bit_depth\n");
         png_set_expand_gray_1_2_4_to_8(png);
     }
     if (png_get_valid(png, info, PNG_INFO_tRNS))
     {
-        printf("RNS\n");
         png_set_tRNS_to_alpha(png);
     }
     if (color_type == PNG_COLOR_TYPE_RGB || color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_PALETTE)
     {
-        printf("color_tpye\n");
         png_set_filler(png, 0xFF, PNG_FILLER_AFTER);
+        png_set_swap_alpha(png);
     }
     if (color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
     {
-        printf("GOT GRAY\n");
         png_set_gray_to_rgb(png);
     }
     png_read_update_info(png, info);
-    auto buffer = new unsigned char[sizeof(unsigned char) * height * png_get_rowbytes(png, info)];
 
-    png_read_image(png, (png_bytep *)buffer);
+    auto buffer = (png_bytep *)malloc(sizeof(png_bytep) * height);
+    for (int y = 0; y < height; y++)
+    {
+        buffer[y] = (png_byte *)malloc(png_get_rowbytes(png, info));
+    }
+    png_read_image(png, buffer);
     fclose(fp);
     png_destroy_read_struct(&png, &info, NULL);
-
-    return mlx::core::array(buffer, {height, width, 4});
+    // flatten the buffer to a 1d array
+    auto temp = new unsigned char[height * width * 4];
+    for (int y = 0; y < height; y++)
+    {
+        memcpy(temp + y * width * 4, buffer[y], width * 4);
+    }
+    free(buffer);
+    return mlx::core::array(temp, {height, width, 4});
 }
 
 bool jpeg_sig_cmp(unsigned char *buf)
