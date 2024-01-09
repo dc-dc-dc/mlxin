@@ -18,5 +18,16 @@ PYBIND11_MODULE(mlxin, m) {
         R"pbdoc(
             load_jpeg(path: str) -> array
         )pbdoc"
-        );
+    );
+
+    m.def(
+        "load_png",
+        &load_png,
+        "path"_a,
+        py::pos_only(),
+        py::kw_only(),
+        R"pbdoc(
+            load_png(path: str) -> array
+        )pbdoc"
+    );
 }

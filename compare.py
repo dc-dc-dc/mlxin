@@ -1,12 +1,12 @@
 from PIL import Image
 import numpy as np
 
-def compare(img: str, cmp: str):
-    x1 = np.load(cmp)
-    x = np.array(Image.open(img))
-    print(x.shape)
-    print(x1.shape)
-    np.testing.assert_allclose(x, x1)
+import mlx.core as mx
+import mlxin as mxi
 
-compare("./dog.png", "./png.npy")
-# compare("./dog.jpg", "./jpeg.npy")
+def compare(img: str, cmp: mx.array):
+    x = np.array(Image.open(img))
+    np.testing.assert_allclose(x, cmp)
+
+compare("./dog.png", mxi.load_png("./dog.png"))
+compare("./dog.jpg", mxi.load_jpeg("./dog.jpg"))
