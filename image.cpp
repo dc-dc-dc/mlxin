@@ -78,20 +78,15 @@ array load_png(const std::string &path)
     }
     png_read_update_info(png, info);
 
+    auto temp = new unsigned char[height * width * 4];
     auto buffer = (png_bytep *)malloc(sizeof(png_bytep) * height);
-    for (int y = 0; y < height; y++)
+    for(int i = 0; i < height; i++)
     {
-        buffer[y] = (png_byte *)malloc(png_get_rowbytes(png, info));
+        buffer[i] = (png_bytep)(temp + i * width * 4);
     }
     png_read_image(png, buffer);
     fclose(fp);
     png_destroy_read_struct(&png, &info, NULL);
-    // flatten the buffer to a 1d array
-    auto temp = new unsigned char[height * width * 4];
-    for (int y = 0; y < height; y++)
-    {
-        memcpy(temp + y * width * 4, buffer[y], width * 4);
-    }
     free(buffer);
     return array(temp, {height, width, 4});
 }
