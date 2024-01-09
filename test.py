@@ -1,3 +1,0 @@
-import mlxin
-
-dir(mlxin)
