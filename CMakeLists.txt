@@ -1,26 +1,43 @@
-cmake_minimum_required(VERSION 3.8)
-project(mlx_in LANGUAGES C CXX)
+cmake_minimum_required(VERSION 3.24)
+project(mlxin LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-add_executable(mlx_in main.cpp)
-
-target_sources(mlx_in PRIVATE 
-  image.cpp
-)
-
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
-find_package(MLX REQUIRED)
-# Set up the mlx_in library
-target_include_directories(mlx_in PUBLIC ${JPEG_INCLUDE_DIR})
-target_include_directories(mlx_in PUBLIC ${PNG_INCLUDE_DIR})
+find_package(MLX CONFIG REQUIRED)
+find_package(Python COMPONENTS Interpreter Development)
+find_package(pybind11 CONFIG REQUIRED)
 
-target_link_libraries(mlx_in PUBLIC ${JPEG_LIBRARIES})
-target_link_libraries(mlx_in PUBLIC ${PNG_LIBRARIES})
+add_library(mlxin_ext)
 
-target_link_libraries(mlx_in PUBLIC ${MLX_LIBRARIES})
+target_sources(mlxin_ext PUBLIC
+  ${CMAKE_CURRENT_LIST_DIR}/image.cpp
+)
 
-# Include src directory
+target_include_directories(mlxin_ext PUBLIC
+  ${CMAKE_CURRENT_LIST_DIR}
+)
+
+# Set up the mlxin library
+target_include_directories(mlxin_ext PUBLIC ${JPEG_INCLUDE_DIR})
+target_include_directories(mlxin_ext PUBLIC ${PNG_INCLUDE_DIR})
+
+target_link_libraries(mlxin_ext PUBLIC ${JPEG_LIBRARIES})
+target_link_libraries(mlxin_ext PUBLIC ${PNG_LIBRARIES})
+
+target_link_libraries(mlxin_ext PUBLIC ${MLX_LIBRARIES})
+
+pybind11_add_module(mlxin
+  ${CMAKE_CURRENT_LIST_DIR}/bindings.cpp
+)
+
+target_link_libraries(mlxin PRIVATE mlxin_ext)
+
+if(BUILD_SHARED_LIBS)
+  target_link_options(mlxin PRIVATE -Wl,-rpath,@loader_path)
+endif()

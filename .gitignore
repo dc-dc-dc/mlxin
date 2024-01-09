@@ -1,11 +1,13 @@
 CMakeFiles/
 .vscode/
 venv/
+build/
 
 cmake_install.cmake
 CMakeCache.txt
 Makefile
 
+*.egg-info
 dog.*
 mlx_in
 *.npy
