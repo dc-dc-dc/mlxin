@@ -19,7 +19,7 @@ FILE *load_file(const std::string &path)
     return fp;
 }
 
-mlx::core::array load_png(const std::string &path)
+array load_png(const std::string &path)
 {
     auto fp = load_file(path);
     unsigned char header[8];
@@ -93,7 +93,7 @@ mlx::core::array load_png(const std::string &path)
         memcpy(temp + y * width * 4, buffer[y], width * 4);
     }
     free(buffer);
-    return mlx::core::array(temp, {height, width, 4});
+    return array(temp, {height, width, 4});
 }
 
 bool jpeg_sig_cmp(unsigned char *buf)
@@ -101,7 +101,7 @@ bool jpeg_sig_cmp(unsigned char *buf)
     return (buf[0] == 0xFF && buf[1] == 0xD8 && buf[2] == 0xFF);
 }
 
-mlx::core::array load_jpeg(const std::string &path)
+array load_jpeg(const std::string &path)
 {
     auto fp = load_file(path);
     unsigned char header[4];
@@ -134,5 +134,5 @@ mlx::core::array load_jpeg(const std::string &path)
     jpeg_destroy_decompress(&cinfo);
 
     fclose(fp);
-    return mlx::core::array(buffer, {height, width, channels});
+    return array(buffer, {height, width, channels});
 }

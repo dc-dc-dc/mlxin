@@ -9,5 +9,7 @@ Makefile
 
 *.egg-info
 dog.*
+*.wav
+*.csv
 mlx_in
 *.npy

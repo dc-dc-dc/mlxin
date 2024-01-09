@@ -1,6 +1,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include "file.h"
 #include "image.h"
 
 namespace py = pybind11;
@@ -28,6 +29,17 @@ PYBIND11_MODULE(mlxin, m) {
         py::kw_only(),
         R"pbdoc(
             load_png(path: str) -> array
+        )pbdoc"
+    );
+
+    m.def(
+        "load_csv",
+        &load_csv,
+        "path"_a,
+        py::pos_only(),
+        py::kw_only(),
+        R"pbdoc(
+            load_csv(path: str) -> array
         )pbdoc"
     );
 }

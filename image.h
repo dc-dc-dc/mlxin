@@ -1,7 +1,11 @@
 #pragma once
 
 #include <mlx/array.h>
-#include <mlx/ops.h>
 
-mlx::core::array load_png(const std::string &path);
-mlx::core::array load_jpeg(const std::string& path);
+using namespace mlx::core;
+
+// load png file into an mlx array, shape will be [height, width, 4]
+array load_png(const std::string &path);
+
+// load jpeg file into an mlx array, shape will be [height, width, 3]
+array load_jpeg(const std::string& path);
