@@ -5,8 +5,6 @@
 #include <jerror.h>
 #include <png.h>
 
-#include <mlx/ops.h>
-
 #include "image.h"
 
 FILE *load_file(const std::string &path)
@@ -89,6 +87,56 @@ array load_png(const std::string &path)
     png_destroy_read_struct(&png, &info, NULL);
     free(buffer);
     return array(temp, {height, width, 4});
+}
+
+void save_png(const std::string &path, array img)
+{
+    printf("STARTED");
+    img.eval();
+    if (img.dtype() != uint8)
+    {
+        throw std::runtime_error("Image must be uint8");
+    }
+    if (img.ndim() != 3)
+    {
+        throw std::runtime_error("Image must be 3d");
+    }
+
+    FILE *fp = fopen(path.c_str(), "wb");
+    if (!fp)
+    {
+        throw std::runtime_error("Failed to open file");
+    }
+    png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (!png)
+    {
+        throw std::runtime_error("Failed to create png struct");
+    }
+    png_infop info = png_create_info_struct(png);
+    if (!info)
+    {
+        throw std::runtime_error("Failed to create png info");
+    }
+    if (setjmp(png_jmpbuf(png)))
+    {
+        throw std::runtime_error("Failed to setjmp");
+    }
+    png_init_io(png, fp);
+    png_set_IHDR(png, info, img.shape(1), img.shape(0), 8, PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+    png_write_info(png, info);
+    printf("GOT HERE");
+    auto data = img.data<unsigned char>();
+    // printf(size_of(data));
+    auto buffer = (png_bytep *)malloc(sizeof(png_bytep) * img.shape(0));
+    for(int i = 0; i < img.shape(0); i++)
+    {
+        buffer[i] = (png_bytep)(data + i * img.shape(1) * 4);
+    }
+    png_write_image(png, buffer);
+    png_write_end(png, NULL);
+    fclose(fp);
+    free(buffer);
+    png_destroy_write_struct(&png, &info);
 }
 
 bool jpeg_sig_cmp(unsigned char *buf)

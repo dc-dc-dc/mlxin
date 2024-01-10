@@ -32,6 +32,18 @@ PYBIND11_MODULE(mlxin, m)
         )pbdoc");
 
     m.def(
+        "save_png",
+        &save_png,
+        "path"_a,
+        "img"_a,
+        py::pos_only(),
+        py::kw_only(),
+        R"pbdoc(
+            save_png(path: str, data: array) -> None
+        )pbdoc"
+    );
+
+    m.def(
         "load_csv",
         &load_csv,
         "path"_a,
