@@ -12,3 +12,7 @@ compare(np.array(Image.open("./dog.png")), mxi.load_png("./dog.png"))
 
 # wget -O dog.jpg https://upload.wikimedia.org/wikipedia/commons/4/43/Cute_dog.jpg
 compare(np.array(Image.open("./dog.jpg")), mxi.load_jpeg("./dog.jpg"))
+
+x = mxi.load_png("./dog.png")
+mxi.save_png("./dog2.png", x)
+compare(mxi.load_png("./dog2.png"), mxi.load_png("./dog.png"))

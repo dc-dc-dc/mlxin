@@ -76,7 +76,7 @@ array load_png(const std::string &path)
     }
     png_read_update_info(png, info);
 
-    auto temp = new unsigned char[height * width * 4];
+    unsigned char temp[height * width * 4];
     auto buffer = (png_bytep *)malloc(sizeof(png_bytep) * height);
     for(int i = 0; i < height; i++)
     {
@@ -89,9 +89,8 @@ array load_png(const std::string &path)
     return array(temp, {height, width, 4});
 }
 
-void save_png(const std::string &path, array img)
+void save_png(const std::string &path, array& img)
 {
-    printf("STARTED");
     img.eval();
     if (img.dtype() != uint8)
     {
@@ -124,9 +123,8 @@ void save_png(const std::string &path, array img)
     png_init_io(png, fp);
     png_set_IHDR(png, info, img.shape(1), img.shape(0), 8, PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
     png_write_info(png, info);
-    printf("GOT HERE");
+
     auto data = img.data<unsigned char>();
-    // printf(size_of(data));
     auto buffer = (png_bytep *)malloc(sizeof(png_bytep) * img.shape(0));
     for(int i = 0; i < img.shape(0); i++)
     {
