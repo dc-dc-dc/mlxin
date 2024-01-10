@@ -16,3 +16,8 @@ compare(np.array(Image.open("./dog.jpg")), mxi.load_jpeg("./dog.jpg"))
 x = mxi.load_png("./dog.png")
 mxi.save_png("./dog2.png", x)
 compare(mxi.load_png("./dog2.png"), mxi.load_png("./dog.png"))
+
+y = mxi.load_jpeg("./dog.jpg")
+mxi.save_jpeg("./dog2.jpg", y)
+# jpeg compression makes this comparison fail
+# compare(mxi.load_jpeg("./dog2.jpg"), mxi.load_jpeg("./dog.jpg"))

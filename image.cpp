@@ -142,6 +142,47 @@ bool jpeg_sig_cmp(unsigned char *buf)
     return (buf[0] == 0xFF && buf[1] == 0xD8 && buf[2] == 0xFF);
 }
 
+void save_jpeg(const std::string &path, array& arr) {
+    arr.eval();
+    if(arr.dtype() != uint8) {
+        throw std::runtime_error("Image must be uint8");
+    }
+    if(arr.ndim() != 3) {
+        throw std::runtime_error("Image must be 3d");
+    }
+    if(arr.shape(-1) != 3) {
+        throw std::runtime_error("Image must have 3 channels");
+    }
+    FILE *fp = fopen(path.c_str(), "wb");
+    if (!fp)
+    {
+        throw std::runtime_error("Failed to open file");
+    }
+    struct jpeg_compress_struct cinfo;
+    struct jpeg_error_mgr jerr;
+    cinfo.err = jpeg_std_error(&jerr);
+    jpeg_create_compress(&cinfo);
+    jpeg_stdio_dest(&cinfo, fp);
+    cinfo.image_width = arr.shape(1);
+    cinfo.image_height = arr.shape(0);
+    cinfo.input_components = 3;
+    cinfo.in_color_space = JCS_RGB;
+    jpeg_set_defaults(&cinfo);
+    jpeg_set_quality(&cinfo, 90, TRUE);
+    jpeg_start_compress(&cinfo, TRUE);
+    auto data = arr.data<unsigned char>();
+    auto buffer = (JSAMPROW *)malloc(sizeof(JSAMPROW) * arr.shape(0));
+    for(int i = 0; i < arr.shape(0); i++)
+    {
+        buffer[i] = (JSAMPROW)(data + i * arr.shape(1) * 3);
+    }
+    jpeg_write_scanlines(&cinfo, buffer, arr.shape(0));
+    jpeg_finish_compress(&cinfo);
+    fclose(fp);
+    free(buffer);
+    jpeg_destroy_compress(&cinfo);
+}
+
 array load_jpeg(const std::string &path)
 {
     auto fp = load_file(path);
