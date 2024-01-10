@@ -8,8 +8,11 @@ CMakeCache.txt
 Makefile
 
 *.egg-info
-dog.*
+*.png
+*.jpg
+*.jpeg
 *.wav
+*.tiktoken
 *.csv
 mlx_in
 *.npy
