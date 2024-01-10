@@ -6,6 +6,7 @@ void save_csv(const std::string &path, std::vector<std::string> header, array& a
     if(header.size() != arr.shape(-1)) {
         throw std::runtime_error("Header size does not match data size");
     }
+    arr.eval();
     std::ofstream file(path, std::ios::binary);
     if (!file.is_open())
     {
