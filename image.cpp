@@ -175,5 +175,7 @@ array load_jpeg(const std::string &path)
     jpeg_destroy_decompress(&cinfo);
 
     fclose(fp);
-    return array(buffer, {height, width, channels});
+    auto x = array(buffer, {height, width, channels});
+    free(buffer);
+    return x;
 }
