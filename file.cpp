@@ -2,6 +2,36 @@
 #include <fstream>
 #include "file.h"
 
+void save_csv(const std::string &path, std::vector<std::string> header, array& arr) {
+    if(header.size() != arr.shape(-1)) {
+        throw std::runtime_error("Header size does not match data size");
+    }
+    std::ofstream file(path, std::ios::binary);
+    if (!file.is_open())
+    {
+        throw std::runtime_error("Failed to open file");
+    }
+    for(int i = 0; i < header.size(); i++) {
+        
+        file << header[i];
+        if(i < header.size() - 1) {
+            file << ",";
+        }
+    }
+    file << std::endl;
+    auto data = arr.data<float>();
+    for(int i = 0; i < arr.shape(0); i++) {
+        for(int j = 0; j < arr.shape(1); j++) {
+            file << data[i * arr.shape(1) + j];
+            if(j < arr.shape(1) - 1) {
+                file << ",";
+            }
+        }
+        file << std::endl;
+    }
+    file.close();
+}
+
 array load_csv(const std::string &path)
 {
     std::ifstream file(path, std::ios::binary);
@@ -14,7 +44,7 @@ array load_csv(const std::string &path)
     std::string line;
     if (std::getline(file, line))
     {
-        width = 0;
+        width = 1;
         for (auto c : line)
         {
             if (c == ',')
@@ -32,7 +62,7 @@ array load_csv(const std::string &path)
     // skip the header
     std::getline(file, line);
     // preallocate the array
-    auto f = new float[width * height];
+    float f[width * height];
     int y = 0;
     while(std::getline(file, line)) {
         int start = 0;
@@ -44,7 +74,6 @@ array load_csv(const std::string &path)
         }
         y++;
     }
-
 
     file.close();
     return array(f, {height, width});

@@ -7,19 +7,19 @@
 namespace py = pybind11;
 using namespace py::literals;
 
-PYBIND11_MODULE(mlxin, m) {
+PYBIND11_MODULE(mlxin, m)
+{
     m.doc() = "mlx_in module for direct loading of data";
-    
+
     m.def(
-        "load_jpeg", 
-        &load_jpeg, 
-        "path"_a, 
+        "load_jpeg",
+        &load_jpeg,
+        "path"_a,
         py::pos_only(),
         py::kw_only(),
         R"pbdoc(
             load_jpeg(path: str) -> array
-        )pbdoc"
-    );
+        )pbdoc");
 
     m.def(
         "load_png",
@@ -29,8 +29,7 @@ PYBIND11_MODULE(mlxin, m) {
         py::kw_only(),
         R"pbdoc(
             load_png(path: str) -> array
-        )pbdoc"
-    );
+        )pbdoc");
 
     m.def(
         "load_csv",
@@ -40,6 +39,17 @@ PYBIND11_MODULE(mlxin, m) {
         py::kw_only(),
         R"pbdoc(
             load_csv(path: str) -> array
-        )pbdoc"
-    );
+        )pbdoc");
+
+    m.def(
+        "save_csv",
+        &save_csv,
+        "path"_a,
+        "header"_a,
+        "data"_a,
+        py::pos_only(),
+        py::kw_only(),
+        R"pbdoc(
+            save_csv(path: str, header: List[str], data: array) -> None
+        )pbdoc");
 }
