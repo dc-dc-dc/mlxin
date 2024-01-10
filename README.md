@@ -16,6 +16,7 @@ png_img = mlxin.load_png("./dog.png")
 csv_data = mlxin.load_csv("./dog_data.csv")
 
 mlxin.save_csv("./dog_copy.csv", [...], csv_data)
+mlxin.save_png("./test.png", mx.ones([256, 256, 3], dtype=mx.uint8))
 ```
 
 ## Supports
