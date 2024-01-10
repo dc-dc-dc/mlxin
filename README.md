@@ -14,6 +14,8 @@ png_img = mlxin.load_png("./dog.png")
 
 # array([2000, 10], dtype=float32)
 csv_data = mlxin.load_csv("./dog_data.csv")
+
+mlxin.save_csv("./dog_copy.csv", [...], csv_data)
 ```
 
 ## Supports
