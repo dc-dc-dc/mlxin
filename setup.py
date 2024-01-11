@@ -87,8 +87,8 @@ class CMakeBuild(build_ext):
 
 if __name__ == "__main__":
     setup(
-        name="mlxin",
-        version="0.0.1",
+        name="mlxin-data",
+        version="0.0.2",
         ext_modules=[CMakeExtension("mlxin")],
         cmdclass={"build_ext": CMakeBuild},
         # packages=["mlxin"],
